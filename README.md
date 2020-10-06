@@ -1,6 +1,6 @@
 # sqlalchemy-challenge
 SQLAlchemy Homework - Surfs Up!
-![image of HW](https://github.com/BPayne-216/sqlalchemy-challenge/blob/master/EmployeeSQL/logo.png)
+![image of HW](https://github.com/BPayne-216/sqlalchemy-challenge/blob/master/Images/surfs-up.png)
 
 This project utilizes SQL (PostgreSQL) to review an employee database of a corporation in the 1980s - 1990s.
 
