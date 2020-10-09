@@ -4,6 +4,7 @@ from flask import Flask, redirect, jsonify
 #Importing dependencies
 import numpy as np
 import datetime as dt
+import json
 
 #Importing SQL
 import sqlalchemy
@@ -59,6 +60,7 @@ def precipitation():
 ###Route stations
 @app.route("/api/v1.0/stations")
 def stations():
+    session = Session(engine)
     results = session.query(Station.station).all()
     session.close()
     all_stations = list(np.ravel(results))
@@ -68,40 +70,20 @@ def stations():
 ###Route tobs
 @app.route("/api/v1.0/tobs")
 def temperature():
+    session = Session(engine)
     #Database ended 2017-08-23, 12-months is 2016-08-23
     results = session.query(Measurement.date, Measurement.tobs).\
             filter(Measurement.date>="2016-08-23").\
             filter(Measurement.date<="2017-08-23").all()
+
     session.close()
+
     temperature_dict = list(np.ravel(results))
     #JSON summary of dict
-    return jsonify(temperature_dict) 
+    return jsonify(temperature_dict)
+###Start Route
 
- ###Return a JSON list of min temp, average temp, and max temp for a given start and start-end range.
- ### when given start only calculate min, avg, max for all dates greater than or equal to start date.
- ### when give the start and the end date, calculate min, avg, max for dates between, inclusive.
-
-###Start date 
-@app.route("/api/v1.0/YYYY-MM-DD")
-def single_date(start):
-    Start_Date = dt.datetime.strptime(start,"%Y-%m-%d")
-
-    summary_stats = session.query(func.min(Measurement.tobs),func.max(Measurement.tobs),func.avg(Measurement.tobs)).\
-        filter(Measurement.date >= Start_date).all()
-    session.close()
-    summary = list(np.ravel(summary_stats))
-    return jsonify(summary)
-    
-###Start date and End date
-@app.route("/api/v1.0/YYYY-MM-DD to YYYY-MM-DD")
-def multiple_dates(start,end):
-    Start_Date = dt.datetime.strptime(start,"%Y-%m-%d")
-    End_Date = dt.datetime.strptime(end,"%Y-%m-%d")
-    summary_stats2 = session.query(func.min(Measurement.tobs),func.max(Measurement.tobs),func.avg(Measurement.tobs)).\
-        filter(Measurement.date.between(Start_Date,End_Date).all()
-    session.close()
-    summary2 = list(np.ravel(summary_stats2))
-    return jsonify(summary)
-
+###Start and End Route
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True)  
+
